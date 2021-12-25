@@ -1,113 +1,113 @@
 let tokenD = canvas.tokens.controlled[0];
 let tactor = GetSheetActor(event);
 if (!tokenD || tokenD.actor != tactor) {
-    let tokens = canvas.tokens.placeables;
-    if (tokens.length > 0){
-        for (let i = 0; i < tokens.length; i++) {
-            if (tokens[i].actor == tactor ){
-                tokenD = tokens[i];
-                break;
-            }
-        }
+  let tokens = canvas.tokens.placeables;
+  if (tokens.length > 0) {
+    for (let i = 0; i < tokens.length; i++) {
+      if (tokens[i].actor == tactor) {
+        tokenD = tokens[i];
+        break;
+      }
     }
+  }
 }
 if (!tokenD) {
-    ui.notifications.warn("No token found for this character");
-    return;
+  ui.notifications.warn("No token found for this character");
+  return;
 }
-if (!CheckUsesOfcItemForToken(tokenD, "Rocket Boots")){
-    ui.notifications.warn("No remaining uses for Rocket Boots");
-    return;
+if (!CheckUsesOfcItemForToken(tokenD, "Rocket Boots")) {
+  ui.notifications.warn("No remaining uses for Rocket Boots");
+  return;
 }
 let mov = GetActorPropertyValue(tactor, 'NUM_MOVEMENT');
-if (!mov ) {
-    mov = 4;
+if (!mov) {
+  mov = 4;
 }
 let range = await MeasuredTemplate.create({
-    t: "circle",
-    user: game.user._id,
-    x: tokenD.x + canvas.grid.size / 2,
-    y: tokenD.y + canvas.grid.size / 2,
-    direction: 0,
-    distance: 2*5*mov,
-    borderColor: "#FF0000",
+  t: "circle",
+  user: game.user._id,
+  x: tokenD.x + canvas.grid.size / 2,
+  y: tokenD.y + canvas.grid.size / 2,
+  direction: 0,
+  distance: 2 * 5 * mov,
+  borderColor: "#FF0000",
 });
 
 let config = {
-    size:1,
-    icon: 'icons/skills/movement/feet-winged-boots-glowing-yellow.webp',
-    drawIcon: true,
-    label: 'Rocket Boots',
-    tag: 'boots boots',
-    drawOutline: true,
-    rememberControlled: true 
+  size: 1,
+  icon: 'icons/skills/movement/feet-winged-boots-glowing-yellow.webp',
+  drawIcon: true,
+  label: 'Rocket Boots',
+  tag: 'boots boots',
+  drawOutline: true,
+  rememberControlled: true
 }
 
 let position = await warpgate.crosshairs.show(config);
 ActivatecItemForToken(tokenD, "Rocket Boots");
 range[0].delete();
 let sequence = new Sequence()
-    .effect()
-        .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/fire/fire_spiral_CIRCLE_01.webm")
-        .atLocation(tokenD)
-        .scale(0.35)
-    .wait(1000)
-        .effect()
-        .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/fire/fire_blast_RAY_02.webm")
-        .atLocation(tokenD)
-        .reachTowards(position)
-    .wait(100)
-    .animation()
-        .on(tokenD)
-        .teleportTo(position)
-        .snapToGrid()
-        .waitUntilFinished()
-    .effect()
-        .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/mix/fire_earth_explosion_CIRCLE_01.webm")
-        .atLocation(position)
-        .scale(0.5)
+  .effect()
+  .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/fire/fire_spiral_CIRCLE_01.webm")
+  .atLocation(tokenD)
+  .scale(0.35)
+  .wait(1000)
+  .effect()
+  .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/fire/fire_blast_RAY_02.webm")
+  .atLocation(tokenD)
+  .reachTowards(position)
+  .wait(100)
+  .animation()
+  .on(tokenD)
+  .teleportTo(position)
+  .snapToGrid()
+  .waitUntilFinished()
+  .effect()
+  .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/mix/fire_earth_explosion_CIRCLE_01.webm")
+  .atLocation(position)
+  .scale(0.5)
 
 sequence.play();
 
 
 function GetActorPropertyValue(actor, propertykey) {
   let returnvalue;
-  if (actor !== null && propertykey!=='' ) {
+  if (actor !== null && propertykey !== '') {
     if (actor.data.data.attributes.hasOwnProperty(propertykey)) {
-      returnvalue=actor.data.data.attributes[propertykey].value;
+      returnvalue = actor.data.data.attributes[propertykey].value;
     }
   }
   return returnvalue;
 }
 
 async function ActivatecItemForToken(token, scItemName) {
-    // check if token has citem   
-    let actor = token.actor;
-    let citem = actor.data.data.citems.find(y => y.name == scItemName);
-    console.debug("Test ", citem)
-    if (citem != null) {
-        let gitem = game.items.find(y=>y.name == scItemName);
-        if (gitem!=null){
-            let cItemData = {};
-            cItemData.id = citem.id;
-            cItemData.value = citem.isactive;                      
-            // check if consumable
-            if (citem.usetype=="CON"){
-              cItemData.iscon=true;  
-            }                     
-            // check if it has a ciRoll
-            // get the roll  		  
-            let attrID=''; // only used when not  ciroll in onRollCheck, set this to empty
-            let ciRoll=true;                                 
-            let isFree=false; //  roll from free tables, 
-            let tableKey=null; // used by free tables, not needed now  
-            // go!       
-            actor._sheet._onRollCheck(attrID, null, cItemData.id, null, ciRoll, isFree, tableKey , cItemData);         
-        } 
-    } else {
-        // 
-        ui.notifications.warn('The token(' + token.data.name + ') does not have the cItem ' + scItemName);
+  // check if token has citem   
+  let actor = token.actor;
+  let citem = actor.data.data.citems.find(y => y.name == scItemName);
+  console.debug("Test ", citem)
+  if (citem != null) {
+    let gitem = game.items.find(y => y.name == scItemName);
+    if (gitem != null) {
+      let cItemData = {};
+      cItemData.id = citem.id;
+      cItemData.value = citem.isactive;
+      // check if consumable
+      if (citem.usetype == "CON") {
+        cItemData.iscon = true;
+      }
+      // check if it has a ciRoll
+      // get the roll  		  
+      let attrID = ''; // only used when not  ciroll in onRollCheck, set this to empty
+      let ciRoll = true;
+      let isFree = false; //  roll from free tables, 
+      let tableKey = null; // used by free tables, not needed now  
+      // go!       
+      actor._sheet._onRollCheck(attrID, null, cItemData.id, null, ciRoll, isFree, tableKey, cItemData);
     }
+  } else {
+    // 
+    ui.notifications.warn('The token(' + token.data.name + ') does not have the cItem ' + scItemName);
+  }
 }
 
 function GetSheetActor(event) {
@@ -129,7 +129,7 @@ function GetSheetActor(event) {
               actorid = actorid.substring(17);
               //console.log('Token Actor ' + actorid);
               //token = canvas.tokens.get(actorid);
-              let token = canvas.tokens.placeables.find(y=>y.id==actorid);
+              let token = canvas.tokens.placeables.find(y => y.id == actorid);
               if (token != null) {
                 returnactor = token.actor;
               }
@@ -148,13 +148,13 @@ function GetSheetActor(event) {
 }
 
 function CheckUsesOfcItemForToken(token, scItemName) {
-    // check if token has citem   
-    let actor = token.actor;
-    let citem = actor.data.data.citems.find(y => y.name == scItemName);
-    console.debug("Item", citem);
-	if (!citem || citem.uses <=0) {
-		return false;
-	} else {
-		return true;
-	}
+  // check if token has citem   
+  let actor = token.actor;
+  let citem = actor.data.data.citems.find(y => y.name == scItemName);
+  console.debug("Item", citem);
+  if (!citem || citem.uses <= 0) {
+    return false;
+  } else {
+    return true;
+  }
 }

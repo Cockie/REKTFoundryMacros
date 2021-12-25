@@ -5,8 +5,8 @@
 //                                                                  
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 //
-function Setting_WeaponGroupKey()          {return 'GROUP_WEAPON';  }// this must be specified according to your groups key
-function Setting_FormWidth(){return 0;} // set to 0 to autosize
+function Setting_WeaponGroupKey() { return 'GROUP_WEAPON'; }// this must be specified according to your groups key
+function Setting_FormWidth() { return 0; } // set to 0 to autosize
 
 //                                                                  
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
@@ -16,12 +16,12 @@ function Setting_FormWidth(){return 0;} // set to 0 to autosize
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 // 
 function macroTitle() {
-  let thismacroname=`Reload weapon`;  
-  return thismacroname;  
+  let thismacroname = `Reload weapon`;
+  return thismacroname;
 }
 
 // This is used to convert texts into javascript/programmable acceptable definitions
-function slugify(text,separator) {
+function slugify(text, separator) {
   return text
     .toString()
     .normalize('NFD')                   // split an accented letter in the base letter and the acent
@@ -33,7 +33,7 @@ function slugify(text,separator) {
 }
 // This is used to make sure that function styles id etc are unique in the total namespace
 // if not unique, then macros/other functinalities could be intermixed and produce unpredictable results
-function thisMacroName(){return `${slugify(macroTitle(),'_')}`;  } 
+function thisMacroName() { return `${slugify(macroTitle(), '_')}`; }
 
 // --------------
 // dialog content
@@ -147,37 +147,37 @@ let html_content = `
   <!--Marker element to detect if dialog is loaded-->
   <input type="hidden" id="${thisMacroName()}_appId" value="-1"> 
 `;
-  // HTML content completed
-  // check if this already loaded 
-  let appId_element=document.getElementById(`${thisMacroName()}_appId`); 
-  if (appId_element!=null){
-    // already loaded    
-    let appId=appId_element.getAttribute('value');
-    if (appId!=null){ 
-      let app=ui.windows[appId];
-      if (app!=null){    
-        // attempt to bring to the front
-        app.bringToTop(); 
-        // and trigger refresh content button
-        let elem = document.getElementById(`${thisMacroName()}_btnRefresh`);
-        if (elem!=null){
-          if (typeof elem.onclick == "function") {
-            elem.onclick.apply(elem);
-          }               
+// HTML content completed
+// check if this already loaded 
+let appId_element = document.getElementById(`${thisMacroName()}_appId`);
+if (appId_element != null) {
+  // already loaded    
+  let appId = appId_element.getAttribute('value');
+  if (appId != null) {
+    let app = ui.windows[appId];
+    if (app != null) {
+      // attempt to bring to the front
+      app.bringToTop();
+      // and trigger refresh content button
+      let elem = document.getElementById(`${thisMacroName()}_btnRefresh`);
+      if (elem != null) {
+        if (typeof elem.onclick == "function") {
+          elem.onclick.apply(elem);
         }
       }
     }
   }
-  else{
-    // show it as dialog, after render update hidden id
-    let d =new Dialog({
-     title: `${macroTitle()}`,
-     content: html_content,
-     buttons: {},
-     render: html => document.getElementById(`${thisMacroName()}_appId`).setAttribute('value',d.appId),
-    });
-    d.options.width = Setting_FormWidth();
-    d.position.width = Setting_FormWidth();
-    d.options.resizable=true;
-    d.render(true);        
-  }
+}
+else {
+  // show it as dialog, after render update hidden id
+  let d = new Dialog({
+    title: `${macroTitle()}`,
+    content: html_content,
+    buttons: {},
+    render: html => document.getElementById(`${thisMacroName()}_appId`).setAttribute('value', d.appId),
+  });
+  d.options.width = Setting_FormWidth();
+  d.position.width = Setting_FormWidth();
+  d.options.resizable = true;
+  d.render(true);
+}
