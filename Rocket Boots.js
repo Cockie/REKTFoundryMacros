@@ -84,7 +84,6 @@ async function ActivatecItemForToken(token, scItemName) {
   // check if token has citem   
   let actor = token.actor;
   let citem = actor.data.data.citems.find(y => y.name == scItemName);
-  console.debug("Test ", citem)
   if (citem != null) {
     let gitem = game.items.find(y => y.name == scItemName);
     if (gitem != null) {
