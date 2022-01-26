@@ -15,9 +15,9 @@ if (!selected) {
     ui.notifications.warn("No token found for this character");
     return;
 }
-let ammo = GetUsesOfcItemForToken(selected, "Blast Grenade");
+let ammo = GetUsesOfcItemForToken(selected, "Frag Grenade");
 if (ammo < 1) {
-    ui.notifications.warn("No enough ammo for Blast Grenade");
+    ui.notifications.warn("No enough ammo for Frag Grenade");
     return;
 }
 
@@ -25,9 +25,9 @@ if (ammo < 1) {
 
 
 let config = {
-    size:7,
+    size:5,
     icon: 'modules/dinos-fancies/assets/icons/grenade.png',
-    label: 'Blast Grenade',
+    label: 'Frag Grenade',
     tag: 'chop power',
     drawIcon: true,
     drawOutline: true,
@@ -39,7 +39,7 @@ let config = {
 let position = await warpgate.crosshairs.show(config);
 
 // check if token has citem   
-let citem = tactor.data.data.citems.find(y => y.name.startsWith("Blast Grenade"));
+let citem = tactor.data.data.citems.find(y => y.name.startsWith("Frag Grenade"));
 if (citem != null) {
     let gitem = game.items.find(y => y.name == citem.name);
     if (gitem != null) {
@@ -74,11 +74,11 @@ let sequence = new Sequence()
         .atLocation(selected)
         .reachTowards(position)
     .effect()
-        .file("jb2a.thunderwave.center.orange")
+        .file("jb2a.fireball.explosion.orange")
         .atLocation(position)
-        .scale(1.5)
+        .scale(1)
         .delay(3000)
-        .waitUntilFinished(-1000)
+        .waitUntilFinished(-2000)
     .effect()
         .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
         .atLocation(position)
