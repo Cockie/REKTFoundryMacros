@@ -21,37 +21,41 @@ if (ammo < 1) {
     return;
 }
 
-// check if token has citem   
-let citem = tactor.data.data.citems.find(y => y.name.startsWith("Gauss Pistol"));
-if (citem != null) {
-    let gitem = game.items.find(y => y.name == citem.name);
-    if (gitem != null) {
-        //set tmp range
-        await SetRanges(tactor, -6, -6, -6, -6);
-        //make the actual roll
-        let fitem = await game.items.get(citem.id);
-        let rollexp = fitem.data.data.roll;
-        let rollname = fitem.data.data.rollname;
-        let rollid = [fitem.data.data.rollid];
-        let rollcitemID = citem.id;
-        let actorattributes = tactor.data.data.attributes;
-        let citemattributes = citem.attributes;
-        let number = citem.number;
-        let targets = game.user.targets.ids;
-        let useData = {};
-        useData.id = citem.id;
-        useData.value = citem.isactive;
-        if (citem.usetype == "CON") {
-            useData.iscon = true;
-        }
-        await tactor._sheet.rollExpression(rollexp, rollname, rollid, actorattributes, citemattributes, number, rollcitemID, targets, null, useData);
-        //deduct one more ammo and put back tmp range
-        await SetRanges(tactor, 0, 0, 0, 0);
-    }
-} else {
-    ui.notifications.warn('The token(' + token.data.name + ') does not have the cItem ' + scItemName);
-}
 
+await SetRanges(tactor, -4, -4, -4, -4);
+//make the actual roll
+ActivatecItemForToken(tokenD, "Gauss Pistol");        
+//put back tmp range
+await SetRanges(tactor, 0, 0, 0, 0);
+
+async function ActivatecItemForToken(token, scItemName) {
+    // check if token has citem   
+    let actor = token.actor;
+    let citem = actor.data.data.citems.find(y => y.name == scItemName);
+    if (citem != null) {
+        let gitem = game.items.find(y => y.name == scItemName);
+        if (gitem != null) {
+            let cItemData = {};
+            cItemData.id = citem.id;
+            cItemData.value = citem.isactive;
+            // check if consumable
+            if (citem.usetype == "CON") {
+                cItemData.iscon = true;
+            }
+            // check if it has a ciRoll
+            // get the roll  		  
+            let attrID = ''; // only used when not  ciroll in onRollCheck, set this to empty
+            let ciRoll = true;
+            let isFree = false; //  roll from free tables, 
+            let tableKey = null; // used by free tables, not needed now  
+            // go!       
+            actor._sheet._onRollCheck(attrID, null, cItemData.id, null, ciRoll, isFree, tableKey, cItemData);
+        }
+    } else {
+        // 
+        ui.notifications.warn('The token(' + token.data.name + ') does not have the cItem ' + scItemName);
+    }
+}
 
 function GetSheetActor(event) {
     let returnactor;

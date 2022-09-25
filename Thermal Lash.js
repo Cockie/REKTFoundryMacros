@@ -29,8 +29,9 @@ let d = new Dialog({
 });
 d.render(true);
 
-function Slice() {
-    let roll = new Roll(`1d3+2`).roll();
+async function Slice() {
+    let roll = new Roll("1d6+2"); 
+    await roll.evaluate({async: true});
     let results_html = `<h2>Slice</h2>
     The attacker releases their hold with a rapid tug, slicing the enemy with the filament for 2 points of damage (if it gets past an armor roll: ${roll.total}).`
 
@@ -41,8 +42,9 @@ function Slice() {
     });
 }
 
-function Sear() {
-    let roll = new Roll(`1d3+2`).roll();
+async function Sear() {
+    let roll = new Roll("1d6+2"); 
+    await roll.evaluate({async: true});
     let results_html = `<h2>Sear</h2>
     If it gets past an armor roll (${roll.total}), the enemy takes 1 point of damage (on that bodypart, if applicable). The lash holds firm.`
 

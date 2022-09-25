@@ -23,7 +23,7 @@ let mov = GetActorPropertyValue(tactor, 'NUM_MOVEMENT');
 if (!mov) {
   mov = 4;
 }
-let range = await MeasuredTemplate.create({
+let range = await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [{
   t: "circle",
   user: game.user._id,
   x: tokenD.x + canvas.grid.size / 2,
@@ -31,7 +31,7 @@ let range = await MeasuredTemplate.create({
   direction: 0,
   distance: 2 * 5 * mov,
   borderColor: "#FF0000",
-});
+}]);
 
 let config = {
   size: 1,
@@ -55,7 +55,7 @@ let sequence = new Sequence()
   .effect()
   .file("modules/animated-spell-effects-cartoon/spell-effects/cartoon/fire/fire_blast_RAY_02.webm")
   .atLocation(tokenD)
-  .reachTowards(position)
+  .stretchTo(position)
   .wait(100)
   .animation()
   .on(tokenD)
@@ -150,7 +150,7 @@ function CheckUsesOfcItemForToken(token, scItemName) {
   // check if token has citem   
   let actor = token.actor;
   let citem = actor.data.data.citems.find(y => y.name == scItemName);
-  console.debug("Item", citem);
+  //console.debug("Item", citem);
   if (!citem || citem.uses <= 0) {
     return false;
   } else {
