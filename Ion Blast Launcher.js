@@ -15,67 +15,135 @@ if (!selected) {
     ui.notifications.warn("No token found for this character");
     return;
 }
-let ammo = GetUsesOfcItemForToken(selected, "Frag Grenade");
+let ammo = GetUsesOfcItemForToken(selected, "Ion Blast Launcher");
 if (ammo < 1) {
-    ui.notifications.warn("No enough ammo for Frag Grenade");
+    ui.notifications.warn("No enough ammo for Ion Blast Launcher");
     return;
 }
 
-
-
-
 let config = {
-    size: 5,
-    icon: 'modules/dinos-fancies/assets/icons/grenade.png',
-    label: 'Frag Grenade',
+    size: 3,
+    icon: 'modules/jb2a_patreon/Library/3rd_Level/Fireball/FireballExplosion_01_Orange_Thumb.webp',
+    label: 'Plasbomb',
     tag: 'chop power',
     drawIcon: true,
     drawOutline: true,
     interval: -1,
     rememberControlled: true
 }
+let position = [0, 0, 0]
+for (let i = 0; i < 3; i++) {
+    position[i] = await warpgate.crosshairs.show(config);
+    canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [position[i]]);
 
-// pick position
-let position = await warpgate.crosshairs.show(config);
+}
 
-ActivatecItemForToken(selected, "Frag Grenade");
-
-//play animation
 let rot = Math.floor(Math.random() * 360);
-let sequence = new Sequence()
-
-    .effect()
-    .file("jb2a.throwable.throw.grenade.02.blackyellow")
+let sequence = new Sequence();
+sequence.effect()
+    .file("jb2a.fire_bolt.green")
     .atLocation(selected)
-    .stretchTo(position)
+    .stretchTo(position[0])
+    .playbackRate(0.5)
+    .scale(2)
+
     .effect()
-    .file("jb2a.fireball.explosion.orange")
-    .atLocation(position)
-    .scale(1)
-    .delay(2800)
+    .file("jb2a.fire_bolt.green")
+    .atLocation(selected)
+    .stretchTo(position[1])
+    .playbackRate(0.5)
+    .scale(2)
+    .delay(200)
+
+    .effect()
+    .file("jb2a.fire_bolt.green")
+    .atLocation(selected)
+    .stretchTo(position[2])
+    .playbackRate(0.5)
+    .scale(2)
+    .delay(400)
     .waitUntilFinished(-2000)
+
+    .effect()
+    .file("modules/jb2a_patreon/Library/Generic/Explosion/Explosion_01_Green_400x400.webm")
+    .atLocation(position[0])
+    .scale(1.15)
+
+    .effect()
+    .file("modules/jb2a_patreon/Library/Generic/Explosion/Explosion_01_Green_400x400.webm")
+    .atLocation(position[1])
+    .scale(1.15)
+    .delay(200)
+
+    .effect()
+    .file("modules/jb2a_patreon/Library/Generic/Explosion/Explosion_01_Green_400x400.webm")
+    .atLocation(position[2])
+    .delay(400)
+    .scale(1.15)
+
     .effect()
     .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
-    .atLocation(position)
+    .atLocation(position[0])
     .rotate(rot)
     .belowTokens()
-    .scale(1.5)
+    .scale(.75)
     .fadeIn(300, { ease: "easeInSine" })
-    .name("Grenade_Blast")
+    .name("Ion_Blast")
     .persist()
     .effect()
     .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
-    .atLocation(position)
+    .atLocation(position[0])
     .rotate(rot)
     .belowTokens()
-    .scale(1.5)
+    .scale(.75)
     .fadeIn(300, { ease: "easeInSine" })
-    .name("Grenade_Blast")
+    .name("Ion_Blast")
     .persist()
-    .play();
 
-canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [position]);
+    .effect()
+    .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
+    .atLocation(position[1])
+    .rotate(rot)
+    .belowTokens()
+    .delay(200)
+    .scale(.75)
+    .fadeIn(300, { ease: "easeInSine" })
+    .name("Ion_Blast")
+    .persist()
+    .effect()
+    .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
+    .atLocation(position[1])
+    .rotate(rot)
+    .delay(200)
+    .belowTokens()
+    .scale(.75)
+    .fadeIn(300, { ease: "easeInSine" })
+    .name("Ion_Blast")
+    .persist()
 
+    .effect()
+    .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
+    .atLocation(position[2])
+    .rotate(rot)
+    .belowTokens()
+    .scale(.75)
+    .delay(400)
+    .fadeIn(300, { ease: "easeInSine" })
+    .name("Ion_Blast")
+    .persist()
+    .effect()
+    .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
+    .atLocation(position[2])
+    .rotate(rot)
+    .delay(400)
+    .belowTokens()
+    .scale(.75)
+    .fadeIn(300, { ease: "easeInSine" })
+    .name("Ion_Blast")
+    .persist()
+
+sequence.play();
+ActivatecItemForToken(selected, "Ion Blast Launcher");
 async function ActivatecItemForToken(token, scItemName) {
     // check if token has citem   
     let actor = token.actor;

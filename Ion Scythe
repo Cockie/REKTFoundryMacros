@@ -20,9 +20,8 @@ let origin = current_target;
 let sequence = new Sequence(); // Create a new sequence
 let prev = tokenOrder[0];
 for (let target of tokenOrder) {
-    /*let angle = Math.atan2(prev.y - origin.y, prev.x - origin.x) * 180 / Math.PI;
+    let angle = Math.atan2(prev.y - origin.y, prev.x - origin.x) * 180 / Math.PI;
     if (target != prev) {
-        console.debug("Angle", angle);
         sequence.effect()
             .file("modules/animated-spell-effects/spell-effects/scifi/bullet_barrage_01.webm")
             .atLocation(origin) // Going from origin
@@ -30,7 +29,7 @@ for (let target of tokenOrder) {
             .randomOffset(0.5)
             .rotateIn(angle, 1000, {ease: "easeInOutSine"})
             .waitUntilFinished(-200) // Slight delay between each arc
-    }*/
+    }
     sequence.effect()
             .file("modules/animated-spell-effects/spell-effects/scifi/bullet_barrage_01.webm")
             .atLocation(origin) // Going from origin
@@ -44,11 +43,9 @@ sequence.play()
 
 function findClosestTo(from, a, b) {
     let a_dist = Math.atan2(a.y - from.y, a.x - from.x);
-    while (a_dist >= Math.PI * 2) a_dist -= Math.PI * 2;
-    while (a_dist < 0) a_dist += Math.PI * 2;
+    while (a_dist > Math.PI * 2) a_dist -= Math.PI * 2;
     let b_dist = Math.atan2(b.y - from.y, b.x - from.x);
-    while (b_dist >= Math.PI * 2) b_dist -= Math.PI * 2;
-    while (b_dist < 0) b_dist += Math.PI * 2;
-    //console.debug("Comparing", a_dist, b_dist);
+    while (b_dist > Math.PI * 2) b_dist -= Math.PI * 2;
+    console.debug("Comparing", a_dist, b_dist);
     return a_dist < b_dist ? a : b;
 }

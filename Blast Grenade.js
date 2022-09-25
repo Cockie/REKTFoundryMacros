@@ -25,81 +25,85 @@ if (ammo < 1) {
 
 
 let config = {
-    size:7,
+    size: 7,
     icon: 'modules/dinos-fancies/assets/icons/grenade.png',
     label: 'Blast Grenade',
     tag: 'chop power',
     drawIcon: true,
     drawOutline: true,
     interval: -1,
-    rememberControlled: true 
+    rememberControlled: true
 }
 
 // pick position
 let position = await warpgate.crosshairs.show(config);
 
-// check if token has citem   
-let citem = tactor.data.data.citems.find(y => y.name.startsWith("Blast Grenade"));
-if (citem != null) {
-    let gitem = game.items.find(y => y.name == citem.name);
-    if (gitem != null) {
-        //make the actual roll
-        let fitem = await game.items.get(citem.id);
-        let rollexp = fitem.data.data.roll;
-        let rollname = fitem.data.data.rollname;
-        let rollid = [fitem.data.data.rollid];
-        let rollcitemID = citem.id;
-        let actorattributes = tactor.data.data.attributes;
-        let citemattributes = citem.attributes;
-        let number = citem.number;
-        let targets = game.user.targets.ids;
-        let useData = {};
-        useData.id = citem.id;
-        useData.value = citem.isactive;
-        if (citem.usetype == "CON") {
-            useData.iscon = true;
-        }
-        tactor._sheet.rollExpression(rollexp, rollname, rollid, actorattributes, citemattributes, number, rollcitemID, targets, null, useData);
-    }
-} else {
-    ui.notifications.warn('The token(' + token.data.name + ') does not have the cItem ' + scItemName);
-}
+ActivatecItemForToken(selected, "Blast Grenade");
 
 //play animation
 let rot = Math.floor(Math.random() * 360);
 let sequence = new Sequence()
 
     .effect()
-        .file("jb2a.slingshot")
-        .atLocation(selected)
-        .reachTowards(position)
+    .file("jb2a.throwable.throw.grenade.01.green")
+    .atLocation(selected)
+    .stretchTo(position)
     .effect()
-        .file("jb2a.thunderwave.center.orange")
-        .atLocation(position)
-        .scale(1.5)
-        .delay(3000)
-        .waitUntilFinished(-1000)
+    .file("jb2a.thunderwave.center.orange")
+    .atLocation(position)
+    .scale(1.5)
+    .delay(2700)
+    .waitUntilFinished(-1000)
     .effect()
-        .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
-        .atLocation(position)
-		.rotate(rot)
-        .belowTokens()
-        .scale(1.5)
-        .fadeIn(300, {ease: "easeInSine"})
-        .name("Grenade_Blast")
-        .persist()
+    .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
+    .atLocation(position)
+    .rotate(rot)
+    .belowTokens()
+    .scale(1.5)
+    .fadeIn(300, { ease: "easeInSine" })
+    .name("Grenade_Blast")
+    .persist()
     .effect()
-        .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
-        .atLocation(position)
-		.rotate(rot)
-        .belowTokens()
-        .scale(1.5)
-        .fadeIn(300, {ease: "easeInSine"})
-        .name("Grenade_Blast")
-        .persist()
-.play();
+    .file("modules/dinos-fancies/assets/BlastMarkDebrisLarge*.webp")
+    .atLocation(position)
+    .rotate(rot)
+    .belowTokens()
+    .scale(1.5)
+    .fadeIn(300, { ease: "easeInSine" })
+    .name("Grenade_Blast")
+    .persist()
+    .play();
 
-MeasuredTemplate.create(position);
+await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [position]);
+
+async function ActivatecItemForToken(token, scItemName) {
+    // check if token has citem   
+    let actor = token.actor;
+    let citem = actor.data.data.citems.find(y => y.name == scItemName);
+    if (citem != null) {
+        let gitem = game.items.find(y => y.name == scItemName);
+        if (gitem != null) {
+            let cItemData = {};
+            cItemData.id = citem.id;
+            cItemData.value = citem.isactive;
+            // check if consumable
+            if (citem.usetype == "CON") {
+                cItemData.iscon = true;
+            }
+            // check if it has a ciRoll
+            // get the roll  		  
+            let attrID = ''; // only used when not  ciroll in onRollCheck, set this to empty
+            let ciRoll = true;
+            let isFree = false; //  roll from free tables, 
+            let tableKey = null; // used by free tables, not needed now  
+            // go!       
+            actor._sheet._onRollCheck(attrID, null, cItemData.id, null, ciRoll, isFree, tableKey, cItemData);
+        }
+    } else {
+        // 
+        ui.notifications.warn('The token(' + token.data.name + ') does not have the cItem ' + scItemName);
+    }
+}
 
 function GetSheetActor(event) {
     let returnactor;

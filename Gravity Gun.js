@@ -13,7 +13,8 @@ let config = {
     interval: -1,
     rememberControlled: true
 }
-let range = await MeasuredTemplate.create({
+
+let range = await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [{
     t: "circle",
     user: game.user._id,
     x: selected.x + canvas.grid.size / 2,
@@ -21,8 +22,7 @@ let range = await MeasuredTemplate.create({
     direction: 0,
     distance: 24 * 5,
     borderColor: "#FF0000",
-});
-
+  }]);
 
 
 
